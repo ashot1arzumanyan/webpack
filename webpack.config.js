@@ -15,7 +15,7 @@ module.exports = {
   entry: './client/src/index.js',
   output: {
     path: path.resolve(__dirname, 'client/build'),
-    filename: 'bundle.js',
+    filename: '[name].[hash].js',
   },
   module: {
     rules: [
@@ -33,32 +33,47 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           'css-loader',
           'sass-loader']
+      },
+      {
+        test: /\.(png|svg|jpg|gif|eot|ttf|woff)$/,
+        use: ['file-loader']
       }
     ]
   },
   resolve: {
     extensions: ['*', '.js', '.jsx', '.scss', '.css']
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: './client/public/index.html'
     }),
     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'main.css',
-      chunkFilename: 'chunk.css'
-    })
+      filename: '[name].[hash].css',
+      chunkFilename: '[name].[hash].css'
+    }),
+    new webpack.HashedModuleIdsPlugin()
   ],
   optimization: {
     minimizer: [
       new UglifyJsPlugin(),
       new OptimizeCSSAssetsPlugin()
-    ]
+    ],
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
   },
   devServer: {
     contentBase: '.client/build',
-    port: 8000,
-    hot: true,
+    historyApiFallback: true,
+    port: 8000
   }
 }
