@@ -13,9 +13,9 @@ const devMode = process.env.NODE_ENV !== 'production'
 
 module.exports = {
   target: 'web',
-  entry: './client/src/index.js',
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'client/build'),
+    path: path.resolve(__dirname, 'build'),
     filename: '[name].[hash].js',
   },
   module: {
@@ -47,9 +47,9 @@ module.exports = {
   devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      template: './client/public/index.html'
+      template: './public/index.html'
     }),
-    new CleanWebpackPlugin(['client/build']),
+    new CleanWebpackPlugin(['build']),
     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
@@ -74,7 +74,9 @@ module.exports = {
     }
   },
   devServer: {
-    contentBase: '.client/build',
+    contentBase: path.join(__dirname, 'src'),
+    compress: true,
+    hot: true,
     historyApiFallback: true,
     port: 8000
   }
